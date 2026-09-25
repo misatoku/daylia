@@ -9,8 +9,6 @@ import {
 } from '../../lib/calendar';
 import MonthView, { MONTH_TITLE_HEIGHT } from './MonthView';
 
-const WEEKDAYS = ['日', '月', '火', '水', '木', '金', '土'];
-
 // FlatList に渡すデータ（月の番号 0〜2399）
 const MONTH_INDEXES = Array.from({ length: TOTAL_MONTHS }, (_, i) => i);
 
@@ -76,23 +74,6 @@ export default function CalendarList({ ref }: Props) {
 
     return (
         <View style={styles.container}>
-            {/* 曜日の行はスクロールせず上に固定 */}
-            {/*
-            <View style={styles.weekdays}>
-                {WEEKDAYS.map((label, d) => (
-                    <Text
-                        key={label}
-                        style={[
-                            styles.weekdayText,
-                            d === 0 && styles.sunday,
-                            d === 6 && styles.saturday,
-                        ]}
-                    >
-                        {label}
-                    </Text>
-                ))}
-            </View>
-            */}
 
             <FlatList
                 ref={listRef}
@@ -114,12 +95,6 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#fff',
-    },
-    weekdays: {
-        flexDirection: 'row',
-        paddingVertical: 6,
-        borderBottomWidth: StyleSheet.hairlineWidth,
-        borderBottomColor: '#ccc',
     },
     weekdayText: {
         flex: 1,

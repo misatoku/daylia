@@ -103,10 +103,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         width: '100%',
     },
-    text: {
-        fontSize: 20,
-        fontWeight: 'bold',
-    },
 
     topBar: {
         backgroundColor: '#9EBCA8',

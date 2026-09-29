@@ -7,4 +7,5 @@ export type DayEntry = {
     photoUrl: string;   // 表示する写真のURL
     mood: Mood | null;  // 気分ステッカー
     diary: string;      // 日記の本文
+    photoPath: string;
 }

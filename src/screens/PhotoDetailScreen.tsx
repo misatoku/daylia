@@ -1,85 +1,57 @@
 /* 写真詳細画面 */
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, Image, TouchableOpacity, Dimensions, Modal} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { Dimensions, Image, ImageBackground, Modal, StyleSheet, TouchableOpacity, View } from 'react-native';
+import type { DayEntry } from '../lib/types';
 import AddPhotoScreen from './AddPhotoScreen';
 
 interface Props {
+  date: string;
+  entry?: DayEntry;
   onClose: () => void;
+  onSaved: () => void;
 }
 
-export default function PhotoDetailScreen({ onClose }: Props) {
+export default function PhotoDetailScreen({ date, entry, onClose, onSaved }: Props) {
     const [isAddPhotoOpen, setIsAddPhotoOpen] = useState(false);
+
+    const controls = (
+        <>
+            <TouchableOpacity onPress={() => setIsAddPhotoOpen(true)}>
+                <Image source={require('../../assets/addicon.png')} style={styles.image} />
+            </TouchableOpacity>
+            <Modal visible={isAddPhotoOpen} animationType="slide">
+                <AddPhotoScreen date={date} onClose={() => setIsAddPhotoOpen(false)} onSaved={onSaved} />
+            </Modal>
+            <TouchableOpacity onPress={onClose}>
+                <Image source={require('../../assets/return.png')} style={styles.image} />
+            </TouchableOpacity>
+        </>
+    );
 
     return (
         <View style={styles.overlay}>
             <View style={styles.bottomSheet}>
-
-                {/* ヘッダー */}
                 <View style={styles.topBar} />
-
-                {/* メインコンテンツ */}
-                <View style={styles.content}>
-                    <TouchableOpacity onPress={() => setIsAddPhotoOpen(true)}>
-                        <Image
-                            source={require('../../assets/addicon.png')}
-                            style={styles.image}
-                        /> 
-                    </TouchableOpacity>
-                    <Modal visible={isAddPhotoOpen} animationType="slide">
-                        <AddPhotoScreen onClose={() => setIsAddPhotoOpen(false)} />
-                    </Modal>
-
-                    <TouchableOpacity onPress={onClose}>
-                        <Image
-                            source={require('../../assets/return.png')}
-                            style={styles.image}
-                        /> 
-                    </TouchableOpacity>
-                </View>
-
-                {/* フッター */}
+                {entry ? (
+                    <ImageBackground source={{ uri: entry.photoUrl }} style={styles.content} resizeMode="cover">
+                        {controls}
+                    </ImageBackground>
+                ) : (
+                    <View style={styles.content}>{controls}</View>
+                )}
                 <View style={styles.bottomBar} />
             </View>
         </View>
     );
 }
 
-// 画面の高さを取得
-const { height: screenHeight } = Dimensions.get('window');  // 高さ
-
+const { height: screenHeight } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
-    overlay: {
-        flex: 1,
-        backgroundColor: 'transparent',
-        justifyContent: 'flex-end',
-    },
-    bottomSheet: {
-        height: screenHeight * 0.5, // 画面の半分の高さ',
-        backgroundColor: 'white',
-    },
-    content: {
-        flex: 1,
-    },
-    image: {
-        width: 50,
-        height: 50,
-    },
-    text: {
-        fontSize: 20,
-        fontWeight: 'bold',
-    },
-    topBar: {
-        backgroundColor: '#9EBCA8',
-        height: 60,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    bottomBar: {
-        backgroundColor: '#9EBCA8',
-        height: 60,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
+    overlay: { flex: 1, backgroundColor: 'transparent', justifyContent: 'flex-end' },
+    bottomSheet: { height: screenHeight * 0.5, backgroundColor: 'white' },
+    content: { flex: 1 },
+    image: { width: 50, height: 50 },
+    topBar: { backgroundColor: '#9EBCA8', height: 60, justifyContent: 'center', alignItems: 'center' },
+    bottomBar: { backgroundColor: '#9EBCA8', height: 60, justifyContent: 'center', alignItems: 'center' },
 });

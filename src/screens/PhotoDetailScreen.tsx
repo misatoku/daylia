@@ -1,6 +1,6 @@
 /* 写真詳細画面 */
 import React, { useState } from 'react';
-import { Dimensions, Image, ImageBackground, Modal, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Dimensions, Image, ImageBackground, StyleSheet, TouchableOpacity, View } from 'react-native';
 import type { DayEntry } from '../lib/types';
 import AddPhotoScreen from './AddPhotoScreen';
 
@@ -14,14 +14,21 @@ interface Props {
 export default function PhotoDetailScreen({ date, entry, onClose, onSaved }: Props) {
     const [isAddPhotoOpen, setIsAddPhotoOpen] = useState(false);
 
+    if (isAddPhotoOpen) {
+        return (
+            <AddPhotoScreen
+                date={date}
+                onClose={() => setIsAddPhotoOpen(false)}
+                onSaved={onSaved}
+            />
+        );
+    }
+
     const controls = (
         <>
             <TouchableOpacity onPress={() => setIsAddPhotoOpen(true)}>
                 <Image source={require('../../assets/addicon.png')} style={styles.image} />
             </TouchableOpacity>
-            <Modal visible={isAddPhotoOpen} animationType="slide">
-                <AddPhotoScreen date={date} onClose={() => setIsAddPhotoOpen(false)} onSaved={onSaved} />
-            </Modal>
             <TouchableOpacity onPress={onClose}>
                 <Image source={require('../../assets/return.png')} style={styles.image} />
             </TouchableOpacity>

@@ -10,6 +10,10 @@ create table if not exists public.day_entries_public (
 
 alter table public.day_entries_public enable row level security;
 
+-- RLSポリシーとは別に、APIロールへテーブル操作そのものを許可します。
+grant usage on schema public to anon, authenticated;
+grant select, insert, update, delete on table public.day_entries_public to anon, authenticated;
+
 drop policy if exists "Public can read entries" on public.day_entries_public;
 drop policy if exists "Public can insert entries" on public.day_entries_public;
 drop policy if exists "Public can update entries" on public.day_entries_public;

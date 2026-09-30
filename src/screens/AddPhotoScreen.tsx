@@ -41,6 +41,7 @@ export default function AddPhotoScreen({ date, onClose, onSaved }: Props) {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ["images"],
       quality: 0.9,
+      base64: true,
     });
     if (!result.canceled) setPhoto(result.assets[0]);
   };
@@ -55,9 +56,13 @@ export default function AddPhotoScreen({ date, onClose, onSaved }: Props) {
       await saveEntry(date, photo, mood, diary);
       onSaved();
     } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "もう一度お試しください。";
       Alert.alert(
         "保存できませんでした",
-        error instanceof Error ? error.message : "もう一度お試しください。",
+        message.includes("Bucket not found")
+          ? "Supabaseに保存先がありません。supabase/schema.sqlをSQL Editorで実行してください。"
+          : message,
       );
     } finally {
       setSaving(false);

@@ -183,7 +183,7 @@ const moodSources = {
 } as const;
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
+  container: { flex: 1, backgroundColor: "#fff" },
   mainContent: { flex: 1 },
   mainContentContainer: {
     justifyContent: "center",

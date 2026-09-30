@@ -8,6 +8,7 @@ import {
     TOTAL_MONTHS,
 } from '../../lib/calendar';
 import MonthView, { MONTH_TITLE_HEIGHT } from './MonthView';
+import type { DayEntry } from '../../lib/types';
 
 // FlatList に渡すデータ（月の番号 0〜2399）
 const MONTH_INDEXES = Array.from({ length: TOTAL_MONTHS }, (_, i) => i);
@@ -19,9 +20,11 @@ export type CalendarListHandle = {
 
 type Props = {
     ref?: React.Ref<CalendarListHandle>;
+    entries: Record<string, DayEntry>;
+    onSaved: () => void;
 };
 
-export default function CalendarList({ ref }: Props) {
+export default function CalendarList({ ref, entries, onSaved }: Props) {
     const { width } = useWindowDimensions();
     const widthCellSize = width / 7;
     const heightCellSize = widthCellSize * 4 / 3; // 1マスの高さは幅の4/3倍
@@ -61,9 +64,11 @@ export default function CalendarList({ ref }: Props) {
                 widthCellSize={widthCellSize}
                 heightCellSize={heightCellSize}
                 todayDay={item === todayIndex ? todayDay : null}
+                entries={entries}
+                onSaved={onSaved}
             />
         ),
-        [widthCellSize, heightCellSize, todayIndex, todayDay],
+        [widthCellSize, heightCellSize, todayIndex, todayDay, entries, onSaved],
     );
 
     useImperativeHandle(ref, () => ({

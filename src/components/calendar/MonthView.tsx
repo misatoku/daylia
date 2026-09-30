@@ -2,6 +2,8 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { getMonthWeeks, getYearMonth } from '../../lib/calendar';
+import { toDateKey } from '../../lib/entries';
+import type { DayEntry } from '../../lib/types';
 import DayCell from './DayCell';
 
 // 月のタイトル部分の高さ。CalendarList の高さ計算でも使う
@@ -12,9 +14,11 @@ type Props = {
     widthCellSize: number;      // 1マスの幅
     heightCellSize: number;     // 1マスの高さ
     todayDay: number | null; // この月に今日が含まれるならその日、なければ null
+    entries: Record<string, DayEntry>;
+    onSaved: () => void;
 };
 
-function MonthView({ index, widthCellSize, heightCellSize, todayDay }: Props) {
+function MonthView({ index, widthCellSize, heightCellSize, todayDay, entries, onSaved }: Props) {
     const { year, month } = getYearMonth(index);
     const weeks = getMonthWeeks(year, month);
 
@@ -27,7 +31,9 @@ function MonthView({ index, widthCellSize, heightCellSize, todayDay }: Props) {
             </View>
             {weeks.map((week, w) => (
                 <View key={w} style={styles.week}>
-                    {week.map((day, d) => (
+                    {week.map((day, d) => {
+                        const date = day === null ? null : toDateKey(year, month, day);
+                        return (
                         <DayCell
                             key={d}
                             day={day}
@@ -35,8 +41,12 @@ function MonthView({ index, widthCellSize, heightCellSize, todayDay }: Props) {
                             isToday={day !== null && day === todayDay}
                             width={widthCellSize}
                             height={heightCellSize}
+                            date={date}
+                            entry={date ? entries[date] : undefined}
+                            onSaved={onSaved}
                         />
-                    ))}
+                        );
+                    })}
                 </View>
             ))}
         </View>

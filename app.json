@@ -6,6 +6,14 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
+    "plugins": [
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "カレンダーへ追加する写真を選ぶため、写真へのアクセスを許可してください。"
+        }
+      ]
+    ],
     "ios": {
       "supportsTablet": true
     },

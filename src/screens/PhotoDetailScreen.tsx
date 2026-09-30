@@ -25,14 +25,15 @@ export default function PhotoDetailScreen({ date, entry, onClose, onSaved }: Pro
     }
 
     const controls = (
-        <>
-            <TouchableOpacity onPress={() => setIsAddPhotoOpen(true)}>
-                <Image source={require('../../assets/addicon.png')} style={styles.image} />
-            </TouchableOpacity>
+        <View style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center',paddingHorizontal:10}}>
             <TouchableOpacity onPress={onClose}>
                 <Image source={require('../../assets/return.png')} style={styles.image} />
+            </TouchableOpacity> 
+            <TouchableOpacity onPress={() => setIsAddPhotoOpen(true)}>
+                <Image source={require('../../assets/addicon.png')} style={styles.image2} />
             </TouchableOpacity>
-        </>
+
+        </View>
     );
 
     return (
@@ -40,9 +41,11 @@ export default function PhotoDetailScreen({ date, entry, onClose, onSaved }: Pro
             <View style={styles.bottomSheet}>
                 <View style={styles.topBar} />
                 {entry ? (
-                    <ImageBackground source={{ uri: entry.photoUrl }} style={styles.content} resizeMode="cover">
+                    <View style={styles.content}>
                         {controls}
+                    <ImageBackground source={{ uri: entry.photoUrl }} style={styles.photo} resizeMode="contain">
                     </ImageBackground>
+                    </View>
                 ) : (
                     <View style={styles.content}>{controls}</View>
                 )}
@@ -58,7 +61,9 @@ const styles = StyleSheet.create({
     overlay: { flex: 1, backgroundColor: 'transparent', justifyContent: 'flex-end' },
     bottomSheet: { height: screenHeight * 0.5, backgroundColor: 'white' },
     content: { flex: 1 },
-    image: { width: 50, height: 50 },
+    photo:{ width: '90%', height: '90%',left:'10%'},
+    image: { width: 50, height: 50 ,alignSelf:"flex-start"},
+    image2:{ width: 50, height: 50 ,alignSelf:"flex-end"},
     topBar: { backgroundColor: '#9EBCA8', height: 60, justifyContent: 'center', alignItems: 'center' },
     bottomBar: { backgroundColor: '#9EBCA8', height: 60, justifyContent: 'center', alignItems: 'center' },
 });

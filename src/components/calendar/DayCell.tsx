@@ -1,6 +1,6 @@
 /* カレンダーの1日分のマス */
 import React, { useState } from "react";
-import { Button, Image, Modal, StyleSheet, Text, View } from "react-native";
+import { Image, Modal, StyleSheet, Text, View, Pressable } from "react-native";
 import type { DayEntry } from "../../lib/types";
 import PhotoDetailScreen from "../../screens/PhotoDetailScreen";
 
@@ -14,6 +14,14 @@ type Props = {
   entry?: DayEntry;
   onSaved: () => void;
 };
+
+const moodSources = {
+  petal1: require("../../../assets/petal1.png"),
+  petal2: require("../../../assets/petal2.png"),
+  petal3: require("../../../assets/petal3.png"),
+  petal4: require("../../../assets/petal4.png"),
+  petal5: require("../../../assets/petal5.png"),
+} as const;
 
 function DayCell({
   day,
@@ -30,7 +38,7 @@ function DayCell({
   if (day === null || date === null) return <View style={{ width, height }} />;
 
   return (
-    <View style={[styles.cell, isToday && styles.todayCell, { width, height }]}>
+    <Pressable style={[styles.cell, isToday && styles.todayCell, { width, height }]} onPress={() => setIsPhotoDetailOpen(true)}>
       {entry ? (
         <Image
           source={{ uri: entry.photoUrl }}
@@ -44,6 +52,7 @@ function DayCell({
             styles.dayText,
             dayOfWeek === 0 && styles.sunday,
             dayOfWeek === 6 && styles.saturday,
+            entry && styles.entryDayText,
           ]}
         >
           {day}
@@ -51,13 +60,10 @@ function DayCell({
       </View>
 
       {/* 写真詳細画面を開くボタン */}
-      <View style={styles.addArea}>
-        <Button
-          title="+"
-          color="#ccc"
-          onPress={() => setIsPhotoDetailOpen(true)}
-        />
+      <View style={styles.addButton}>
+        <Text style={styles.addButtonText}>+</Text>
       </View>
+
       <Modal visible={isPhotoDetailOpen} animationType="slide" transparent>
         <PhotoDetailScreen
           date={date}
@@ -70,8 +76,15 @@ function DayCell({
         />
       </Modal>
 
-      {/* TODO: ここに写真のサムネイルやステッカーを表示する */}
-    </View>
+      {/* 今日の気分の表示 */}
+      {entry?.mood ? (
+        <Image
+          source={moodSources[entry.mood]}
+          style={styles.moodIcon}
+          resizeMode="contain"
+        />
+      ) : null}
+    </Pressable>
   );
 }
 
@@ -87,28 +100,40 @@ const styles = StyleSheet.create({
   },
   todayCell: { borderColor: "#9EBCA8", borderWidth: 1.5 },
   dayCircle: {
-    width: 26,
-    height: 26,
+    width: 25,
+    height: 25,
     borderRadius: 13,
     justifyContent: "center",
     alignItems: "center",
   },
-  addArea: {
-    flex: 1,
-    ...StyleSheet.absoluteFill,
+
+  addButton: {
+    position: "absolute",
     justifyContent: "center",
     alignItems: "center",
+    top: 0, right: 0, bottom: 0, left: 0,
+    zIndex: -1,
+  },
+  addButtonText: {
+    fontSize: 24,
+    color: "#ccc",
   },
   dayText: { fontSize: 14, color: "#333" },
   sunday: { color: "#D9534F" },
   saturday: { color: "#4A7BC8" },
+  entryDayText:{ color: "#fff" },
   thumbnail: {
     position: "absolute",
     top: 0,
     right: 0,
     bottom: 0,
     left: 0,
-    width: "100%",
-    height: "100%",
+  },
+  moodIcon: {
+    position: "absolute",
+    top: 1,
+    right: 1,
+    width: 30,
+    height: 30,
   },
 });

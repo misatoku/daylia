@@ -9,6 +9,7 @@ import { fetchEntries } from '../lib/entries';
 import type { DayEntry } from '../lib/types';
 import { getTodayIndex } from '../lib/calendar';
 import MonthView from '../components/calendar/MonthView';
+import {supabase} from '../lib/supabase'
 
 export default function HomeScreen() {
   // dbから取得したデータをstateで保持する
@@ -40,6 +41,13 @@ export default function HomeScreen() {
     }
     };
 
+    const handleLogout = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      Alert.alert('ログアウトに失敗しました', error.message);
+    }
+    };
+
     const { width } = useWindowDimensions();
     const widthCellSize = width / 7;
     const heightCellSize = widthCellSize * 4 / 3;
@@ -54,8 +62,11 @@ export default function HomeScreen() {
         {/* メニューバー */}
         <View style={styles.overlay}>
             <View style={styles.menuBar}>
-                <TouchableOpacity onPress={handleShare}>
-                    <Text>↑</Text>
+                <TouchableOpacity style={styles.shareButton} onPress={handleShare}>
+                    <Text>共有</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+                    <Text>ログアウト</Text>
                 </TouchableOpacity>
             </View>
         </View>
@@ -65,14 +76,18 @@ export default function HomeScreen() {
 
         {/* 撮影用の画面外カレンダー */}
         <View ref={calendarRef} collapsable={false} style={[styles.shareTarget, { width }]}>
-            <MonthView
-                index={currentMonthIndex}
-                widthCellSize={widthCellSize}
-                heightCellSize={heightCellSize}
-                todayDay={null}
-                entries={entries}
-                onSaved={loadEntries}
-            />
+          <View style={styles.topBar}>
+            <Image source={require("../../assets/logo.png")} style={styles.image} />
+          </View>
+          <MonthView
+              index={currentMonthIndex}
+              widthCellSize={widthCellSize}
+              heightCellSize={heightCellSize}
+              todayDay={null}
+              entries={entries}
+              onSaved={loadEntries}
+          />
+          <View style={styles.bottomBar} />
         </View>
     </SafeAreaView>
   );
@@ -90,6 +105,26 @@ const styles = StyleSheet.create({
         borderRadius: 30, borderColor: "#ccc", borderWidth: 1, borderStyle: 'solid',
         shadowColor: "#ccc", shadowOffset: { width: 4, height: 4 }, shadowOpacity: 0.5, shadowRadius: 4,
         flexDirection: "row", justifyContent: "space-around",
+    },
+    shareButton: {
+        backgroundColor: "#fff",
+        padding: 10,
+        borderWidth: 1,
+        borderColor: "#888",
+        borderRadius: 5,
+        margin: 10,
+        width: 100,
+        alignItems: "center",
+    },
+    logoutButton: {
+        backgroundColor: "#9EBCA8",
+        padding: 10,
+        borderWidth: 1,
+        borderColor: "#888",
+        borderRadius: 5,
+        margin: 10,
+        width: 100,
+        alignItems: "center",
     },
     bottomBar: { backgroundColor: '#9EBCA8', height: 70, justifyContent: 'center', alignItems: 'center' },
     image: { width: 150, height: 150 },

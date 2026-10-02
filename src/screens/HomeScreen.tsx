@@ -1,15 +1,19 @@
 /* ホーム画面 */
 import React, { useCallback, useEffect, useState, useRef } from 'react';
-import { Alert, Image, StyleSheet, View, TouchableOpacity, Text } from 'react-native';
+import { Alert, Image, StyleSheet, View, TouchableOpacity, Text, useWindowDimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { captureRef } from 'react-native-view-shot';
 import * as Sharing from 'expo-sharing';
 import CalendarList from '../components/calendar/CalendarList';
 import { fetchEntries } from '../lib/entries';
 import type { DayEntry } from '../lib/types';
+import { getTodayIndex } from '../lib/calendar';
+import MonthView from '../components/calendar/MonthView';
 
 export default function HomeScreen() {
     const [entries, setEntries] = useState<Record<string, DayEntry>>({});
+
+    const [currentMonthIndex, setCurrentMonthIndex] = useState(getTodayIndex); // 見てる月を渡す
 
     const calendarRef = useRef<View>(null);   // 目印を作る
 
@@ -35,16 +39,17 @@ export default function HomeScreen() {
     }
     };
 
+    const { width } = useWindowDimensions();
+    const widthCellSize = width / 7;
+    const heightCellSize = widthCellSize * 4 / 3;
+
     return (
     <SafeAreaView style={styles.container}>
       <View style={styles.topBar}>
         <Image source={require('../../assets/logo.png')} style={styles.image} />
       </View>
       <View style={styles.content}>
-        {/* 目印を紐づけ */}
-        <View ref={calendarRef} collapsable={false} style={{ flex: 1 }}>
-            <CalendarList entries={entries} onSaved={loadEntries} />
-        </View>
+        <CalendarList entries={entries} onSaved={loadEntries} onMonthChange={setCurrentMonthIndex} />
         {/* メニューバー */}
         <View style={styles.overlay}>
             <View style={styles.menuBar}>
@@ -56,6 +61,18 @@ export default function HomeScreen() {
       </View>
 
       <View style={styles.bottomBar} />
+
+        {/* 撮影用の画面外カレンダー */}
+        <View ref={calendarRef} collapsable={false} style={[styles.shareTarget, { width }]}>
+            <MonthView
+                index={currentMonthIndex}
+                widthCellSize={widthCellSize}
+                heightCellSize={heightCellSize}
+                todayDay={null}
+                entries={entries}
+                onSaved={loadEntries}
+            />
+        </View>
     </SafeAreaView>
     );
 }
@@ -75,4 +92,9 @@ const styles = StyleSheet.create({
     },
     bottomBar: { backgroundColor: '#9EBCA8', height: 70, justifyContent: 'center', alignItems: 'center' },
     image: { width: 150, height: 150 },
+    shareTarget: {
+    position: 'absolute',
+    left: -10000,          // 画面の外に追い出す
+    backgroundColor: '#fff', // 背景がないと透明な画像になるので白を敷く
+    },
 });

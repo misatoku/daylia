@@ -131,7 +131,22 @@ export default function AddPhotoScreen({ date, onClose, onSaved }: Props) {
           <View style={styles.todayStamp}>
             {(["petal1", "petal2", "petal3", "petal4", "petal5"] as Mood[]).map(
               (item) => (
-                <TouchableOpacity key={item} onPress={() => setMood(item)}>
+                <TouchableOpacity
+                  key={item}
+                  style={[
+                    styles.moodButton,
+                    mood === item && styles.selectedMoodButton,
+                  ]}
+                  onPress={() => setMood(item)}
+                  accessibilityRole="button"
+                  accessibilityState={{ selected: mood === item }}
+                >
+                  {mood === item ? (
+                    <Image
+                      source={moodSources[item]}
+                      style={styles.selectedMoodOutline}
+                    />
+                  ) : null}
                   <Image source={moodSources[item]} style={styles.stampImage} />
                 </TouchableOpacity>
               ),
@@ -234,7 +249,22 @@ const styles = StyleSheet.create({
   photoImage: { width: "100%", height: "100%" },
   todayPhotoText: { fontSize: 20, color: "#000" },
   todayStamp: { flexDirection: "row" },
-  stampImage: { width: 70, height: 70 },
+  moodButton: {
+    width: 70,
+    height: 70,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  selectedMoodButton: {
+    transform: [{ scale: 1.4 }],
+  },
+  selectedMoodOutline: {
+    position: "absolute",
+    width: 69,
+    height: 69,
+    tintColor: "#F29CAF",
+  },
+  stampImage: { width: 60, height: 60 },
   todayDiary: { width: 350 },
   diaryInput: {
     width: "100%",

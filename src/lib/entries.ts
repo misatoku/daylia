@@ -16,26 +16,29 @@ export function toDateKey(year: number, month: number, day: number) {
   return `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
 }
 
+// DBからデータを取得する場所
 export async function fetchEntries(): Promise<Record<string, DayEntry>> {
   const { data, error } = await supabase
-    .from("day_entries_public")
-    .select("date, photo_path, mood, diary");
+    .from("day_entries_public") // day_entries_publicっていう名前のテーブルからデータを取ってくる
+    .select("date, photo_path, mood, diary"); // この4つのカラムからデータを取ってくる
   if (error) throw error;
 
   const rows = (data ?? []) as DayEntryRow[];
   const entries = rows.map((row) => {
     const { data: publicUrl } = supabase.storage
       .from(BUCKET)
-      .getPublicUrl(row.photo_path);
+      .getPublicUrl(row.photo_path); // getPublicUrlでSupabaseのストレージから写真のURLを取得する
     return {
       date: row.date,
-      photoUrl: publicUrl.publicUrl,
+      photoUrl: publicUrl.publicUrl, // publicUrl.publicUrlで取得したURLをphotoUrlに格納する
       photoPath: row.photo_path,
       mood: row.mood,
       diary: row.diary,
     } satisfies DayEntry;
   });
 
+  // ここで取得したデータをオブジェクト化して返す。mapはキー・バリュー配列
+  // これでキーで日付を指定して探索できるようになる
   return Object.fromEntries(entries.map((entry) => [entry.date, entry]));
 }
 

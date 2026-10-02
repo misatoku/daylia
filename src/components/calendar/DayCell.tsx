@@ -39,7 +39,7 @@ function DayCell({
 
   return (
     <Pressable style={[styles.cell, isToday && styles.todayCell, { width, height }]} onPress={() => setIsPhotoDetailOpen(true)}>
-      {entry ? (
+      {entry?.photoUrl ? (
         <Image
           source={{ uri: entry.photoUrl }}
           style={styles.thumbnail}

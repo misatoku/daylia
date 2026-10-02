@@ -71,12 +71,15 @@ export default function PhotoDetailScreen({
               showsVerticalScrollIndicator={false}
             >
               <View style={styles.photoContainer}>
-                <ImageBackground
-                  source={{ uri: entry.photoUrl }}
-                  style={styles.photo}
-                  imageStyle={styles.photoImage}
-                  resizeMode="contain"
-                />
+                {entry.photoUrl ? (
+                  <ImageBackground
+                    source={{ uri: entry.photoUrl }}
+                    style={styles.photo}
+                    imageStyle={styles.photoImage}
+                    resizeMode="contain"
+                  />
+                ) : null}
+                
                 {entry.mood ? (
                   <Image
                     source={moodSources[entry.mood]}

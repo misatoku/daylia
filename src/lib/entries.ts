@@ -24,13 +24,20 @@ export async function fetchEntries(): Promise<Record<string, DayEntry>> {
   if (error) throw error;
 
   const rows = (data ?? []) as DayEntryRow[];
-  const entries = rows.map((row) => {
-    const { data: publicUrl } = supabase.storage
-      .from(BUCKET)
-      .getPublicUrl(row.photo_path); // getPublicUrlでSupabaseのストレージから写真のURLを取得する
+  if (rows.length === 0) return {};
+  // 写真のパスだけを集めた配列を作る
+  const paths = rows.map((row) => row.photo_path);
+
+  // まとめて期限付きURLを作る（3600秒 = 1時間有効）
+  const { data: urls, error: urlError } = await supabase.storage
+    .from(BUCKET)
+    .createSignedUrls(paths, 3600);
+  if (urlError) throw urlError;
+
+  const entries = rows.map((row, i) => {
     return {
       date: row.date,
-      photoUrl: publicUrl.publicUrl, // publicUrl.publicUrlで取得したURLをphotoUrlに格納する
+      photoUrl: urls[i].signedUrl ?? "",
       photoPath: row.photo_path,
       mood: row.mood,
       diary: row.diary,
@@ -54,8 +61,13 @@ export async function saveEntry(
     );
   }
 
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) {
+    throw new Error("ログインしていません。");
+  }
+
   const extension = asset.fileName?.split(".").pop()?.toLowerCase() ?? "jpg";
-  const photoPath = `public/${date}/${Date.now()}.${extension}`;
+  const photoPath = `${user.id}/${date}/${Date.now()}.${extension}`;
   const fileData = decode(asset.base64); // base64の文字列データをArrayBufferに変換
 
   const { error: uploadError } = await supabase.storage

@@ -1,6 +1,6 @@
 /* 縦スクロールのカレンダー */
 import React, { useCallback, useImperativeHandle, useMemo, useRef } from 'react';
-import { FlatList, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
+import { FlatList, StyleSheet, Text, useWindowDimensions, View, ViewToken } from 'react-native';
 import {
     getTodayIndex,
     getWeekCount,
@@ -12,6 +12,8 @@ import type { DayEntry } from '../../lib/types';
 
 // FlatList に渡すデータ（月の番号 0〜2399）
 const MONTH_INDEXES = Array.from({ length: TOTAL_MONTHS }, (_, i) => i);
+// どれくらい見えたら“見えている”とするか
+const VIEWABILITY_CONFIG = { itemVisiblePercentThreshold: 50 };
 
 // 親から「今日に戻る」を呼べるようにするための型
 export type CalendarListHandle = {
@@ -22,9 +24,10 @@ type Props = {
     ref?: React.Ref<CalendarListHandle>;
     entries: Record<string, DayEntry>;
     onSaved: () => void;
+    onMonthChange: (index: number) => void;
 };
 
-export default function CalendarList({ ref, entries, onSaved }: Props) {
+export default function CalendarList({ ref, entries, onSaved, onMonthChange }: Props) {
     const { width } = useWindowDimensions();
     const widthCellSize = width / 7;
     const heightCellSize = widthCellSize * 4 / 3; // 1マスの高さは幅の4/3倍
@@ -47,6 +50,17 @@ export default function CalendarList({ ref, entries, onSaved }: Props) {
         }
         return { heights, offsets };
     }, [heightCellSize]);
+
+    // 見えてる月が替わったとき返す
+    const handleViewableItemsChanged = useCallback(
+    ({ viewableItems }: { viewableItems: ViewToken<number>[] }) => {
+        const first = viewableItems[0];
+        if (first) {
+            onMonthChange(first.item);
+        }
+    },
+    [onMonthChange],
+    );
 
     const getItemLayout = useCallback(
         (_: ArrayLike<number> | null | undefined, index: number) => ({
@@ -91,6 +105,8 @@ export default function CalendarList({ ref, entries, onSaved }: Props) {
                 maxToRenderPerBatch={2}
                 windowSize={5}
                 showsVerticalScrollIndicator={false}
+                onViewableItemsChanged={handleViewableItemsChanged}
+                viewabilityConfig={VIEWABILITY_CONFIG}
             />
         </View>
     );

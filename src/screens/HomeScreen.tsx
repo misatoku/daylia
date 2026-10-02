@@ -11,7 +11,8 @@ import { getTodayIndex } from '../lib/calendar';
 import MonthView from '../components/calendar/MonthView';
 
 export default function HomeScreen() {
-    const [entries, setEntries] = useState<Record<string, DayEntry>>({});
+  // dbから取得したデータをstateで保持する
+  const [entries, setEntries] = useState<Record<string, DayEntry>>({});
 
     const [currentMonthIndex, setCurrentMonthIndex] = useState(getTodayIndex); // 見てる月を渡す
 
@@ -46,7 +47,7 @@ export default function HomeScreen() {
     return (
     <SafeAreaView style={styles.container}>
       <View style={styles.topBar}>
-        <Image source={require('../../assets/logo.png')} style={styles.image} />
+        <Image source={require("../../assets/logo.png")} style={styles.image} />
       </View>
       <View style={styles.content}>
         <CalendarList entries={entries} onSaved={loadEntries} onMonthChange={setCurrentMonthIndex} />
@@ -74,7 +75,7 @@ export default function HomeScreen() {
             />
         </View>
     </SafeAreaView>
-    );
+  );
 }
 
 const styles = StyleSheet.create({

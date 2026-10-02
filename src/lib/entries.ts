@@ -1,5 +1,6 @@
 import type { ImagePickerAsset } from "expo-image-picker";
 import { decode } from "base64-arraybuffer";
+import { ImageManipulator, SaveFormat } from "expo-image-manipulator";
 import { supabase } from "./supabase";
 import type { DayEntry, Mood } from "./types";
 
@@ -55,25 +56,40 @@ export async function saveEntry(
   mood: Mood | null,
   diary: string,
 ) {
-  if (!asset.base64) {
-    throw new Error(
-      "画像データを読み込めませんでした。写真を選び直してください。",
-    );
-  }
 
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) {
     throw new Error("ログインしていません。");
   }
 
-  const extension = asset.fileName?.split(".").pop()?.toLowerCase() ?? "jpg";
+  // 写真を読み込んで、幅1080pxに縮める指示を出す
+  const context = ImageManipulator.manipulate(asset.uri);
+  context.resize({ width: 1080 });
+
+  // 指示どおりに画像を作る
+  const image = await context.renderAsync();
+
+  // JPEG で、画質0.7で保存して、base64 ももらう
+  const resized = await image.saveAsync({
+    format: SaveFormat.JPEG,
+    compress: 0.7,
+    base64: true,
+  });
+  // resized.base64 が縮めた写真のデータ
+  if (!resized.base64) {
+    throw new Error(
+      "画像データを読み込めませんでした。写真を選び直してください。",
+    );
+  }
+
+  const extension = "jpg";
   const photoPath = `${user.id}/${date}/${Date.now()}.${extension}`;
-  const fileData = decode(asset.base64); // base64の文字列データをArrayBufferに変換
+  const fileData = decode(resized.base64); // base64の文字列データをArrayBufferに変換
 
   const { error: uploadError } = await supabase.storage
     .from(BUCKET)
     .upload(photoPath, fileData, {
-      contentType: asset.mimeType ?? "image/jpeg",
+      contentType: "image/jpeg",
       upsert: false,
     });
   if (uploadError) throw uploadError;

@@ -1,6 +1,6 @@
 /* 写真詳細画面 */
 import React, { useState } from 'react';
-import { Dimensions, Image, ImageBackground, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Dimensions, Image, ImageBackground, StyleSheet, Text,TouchableOpacity, View } from 'react-native';
 import type { DayEntry } from '../lib/types';
 import AddPhotoScreen from './AddPhotoScreen';
 
@@ -29,6 +29,10 @@ export default function PhotoDetailScreen({ date, entry, onClose, onSaved }: Pro
             <TouchableOpacity onPress={onClose}>
                 <Image source={require('../../assets/return.png')} style={styles.image} />
             </TouchableOpacity> 
+            <View style={styles.dateContainer}> 
+                <Text style={styles.dateText}>{new Date(date).getMonth() + 1}月{new Date(date).getDate()}日
+                </Text>
+            </View>
             <TouchableOpacity onPress={() => setIsAddPhotoOpen(true)}>
                 <Image source={require('../../assets/addicon.png')} style={styles.image2} />
             </TouchableOpacity>
@@ -66,4 +70,6 @@ const styles = StyleSheet.create({
     image2:{ width: 50, height: 50 ,alignSelf:"flex-end"},
     topBar: { backgroundColor: '#9EBCA8', height: 60, justifyContent: 'center', alignItems: 'center' },
     bottomBar: { backgroundColor: '#9EBCA8', height: 60, justifyContent: 'center', alignItems: 'center' },
+    dateText: { fontSize: 20, fontWeight: 'bold', },
+    dateContainer: { flex: 1, alignItems: 'center'},
 });

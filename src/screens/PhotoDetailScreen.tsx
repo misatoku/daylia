@@ -12,10 +12,6 @@ import {
 } from "react-native";
 import type { DayEntry, Mood } from "../lib/types";
 import AddPhotoScreen from "./AddPhotoScreen";
-import React, { useState } from 'react';
-import { Dimensions, Image, ImageBackground, StyleSheet, Text,TouchableOpacity, View } from 'react-native';
-import type { DayEntry } from '../lib/types';
-import AddPhotoScreen from './AddPhotoScreen';
 
 interface Props {
   date: string;
@@ -65,18 +61,6 @@ export default function PhotoDetailScreen({
       </TouchableOpacity>
     </View>
   );
-    const controls = (
-        <View style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center',paddingHorizontal:10}}>
-            <TouchableOpacity onPress={onClose}>
-                <Image source={require('../../assets/return.png')} style={styles.image} />
-            </TouchableOpacity> 
-            <View style={styles.dateContainer}> 
-                <Text style={styles.dateText}>{new Date(date).getMonth() + 1}月{new Date(date).getDate()}日
-                </Text>
-            </View>
-            <TouchableOpacity onPress={() => setIsAddPhotoOpen(true)}>
-                <Image source={require('../../assets/addicon.png')} style={styles.image2} />
-            </TouchableOpacity>
 
   return (
     <View style={styles.overlay}>
@@ -166,14 +150,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-    overlay: { flex: 1, backgroundColor: 'transparent', justifyContent: 'flex-end' },
-    bottomSheet: { height: screenHeight * 0.5, backgroundColor: 'white' },
-    content: { flex: 1 },
-    photo:{ width: '90%', height: '90%',left:'10%'},
-    image: { width: 50, height: 50 ,alignSelf:"flex-start"},
-    image2:{ width: 50, height: 50 ,alignSelf:"flex-end"},
-    topBar: { backgroundColor: '#9EBCA8', height: 60, justifyContent: 'center', alignItems: 'center' },
-    bottomBar: { backgroundColor: '#9EBCA8', height: 60, justifyContent: 'center', alignItems: 'center' },
-    dateText: { fontSize: 20, fontWeight: 'bold', },
-    dateContainer: { flex: 1, alignItems: 'center'},
+  dateText: { fontSize: 20, fontWeight: "bold" },
+  dateContainer: { flex: 1, alignItems: "center" },
 });

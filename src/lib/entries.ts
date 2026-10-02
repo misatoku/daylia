@@ -80,7 +80,7 @@ export async function saveEntry(
       diary: diary.trim(),
       updated_at: new Date().toISOString(),
     },
-    { onConflict: "date" },
+    { onConflict: "date,user_id" },
   );
 
   if (saveError) {

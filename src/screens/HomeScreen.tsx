@@ -9,6 +9,7 @@ import { fetchEntries } from '../lib/entries';
 import type { DayEntry } from '../lib/types';
 import { getTodayIndex } from '../lib/calendar';
 import MonthView from '../components/calendar/MonthView';
+import {supabase} from '../lib/supabase'
 
 export default function HomeScreen() {
   // dbから取得したデータをstateで保持する
@@ -40,6 +41,13 @@ export default function HomeScreen() {
     }
     };
 
+    const handleLogout = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      Alert.alert('ログアウトに失敗しました', error.message);
+    }
+    };
+
     const { width } = useWindowDimensions();
     const widthCellSize = width / 7;
     const heightCellSize = widthCellSize * 4 / 3;
@@ -56,6 +64,9 @@ export default function HomeScreen() {
             <View style={styles.menuBar}>
                 <TouchableOpacity onPress={handleShare}>
                     <Text>↑</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={handleLogout}>
+                    <Text>ログアウト</Text>
                 </TouchableOpacity>
             </View>
         </View>

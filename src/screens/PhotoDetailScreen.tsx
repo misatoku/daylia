@@ -47,17 +47,14 @@ export default function PhotoDetailScreen({
         paddingHorizontal: 10,
       }}
     >
-      <TouchableOpacity onPress={onClose}>
-        <Image
-          source={require("../../assets/return.png")}
-          style={styles.image}
-        />
+      <TouchableOpacity style={styles.returnButton} onPress={onClose}>
+        <Text style={styles.returnButtonText}>&lt;戻る</Text>
       </TouchableOpacity>
-      <TouchableOpacity onPress={() => setIsAddPhotoOpen(true)}>
-        <Image
-          source={require("../../assets/addicon.png")}
-          style={styles.image2}
-        />
+      <TouchableOpacity
+        style={styles.addButton}
+        onPress={() => setIsAddPhotoOpen(true)}
+      >
+        <Text style={styles.addButtonText}>＋</Text>
       </TouchableOpacity>
     </View>
   );
@@ -152,4 +149,14 @@ const styles = StyleSheet.create({
   },
   dateText: { fontSize: 20, fontWeight: "bold" },
   dateContainer: { flex: 1, alignItems: "center" },
+  returnButton: { padding: 10, borderRadius: 5, alignSelf: "flex-start" },
+  returnButtonText: { color: "#000", fontSize: 20 },
+  addButton: {
+    backgroundColor: "#fff",
+    padding: 10,
+    borderRadius: 5,
+    width: 50,
+    alignSelf: "flex-end",
+  },
+  addButtonText: { color: "#000", fontSize: 20, fontWeight: "bold" },
 });

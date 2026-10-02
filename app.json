@@ -12,7 +12,8 @@
         {
           "photosPermission": "カレンダーへ追加する写真を選ぶため、写真へのアクセスを許可してください。"
         }
-      ]
+      ],
+      "expo-sharing"
     ],
     "ios": {
       "supportsTablet": true

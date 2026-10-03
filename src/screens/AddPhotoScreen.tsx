@@ -41,7 +41,6 @@ export default function AddPhotoScreen({ date, onClose, onSaved }: Props) {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ["images"],
       quality: 0.9,
-      base64: true,
     });
     if (!result.canceled) setPhoto(result.assets[0]);
   };
@@ -162,7 +161,7 @@ export default function AddPhotoScreen({ date, onClose, onSaved }: Props) {
             />
             <Text style={styles.titleText}>日記</Text>
           </View>
-          <View style={styles.todayDiary}>
+          <View style={styles.todayDiary} >
             <TextInput
               value={diary}
               onChangeText={setDiary}
